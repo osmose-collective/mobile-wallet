@@ -11,7 +11,7 @@ import { Contact, Profile, Wallet, WalletKeys } from '@models/model';
 
 import lodash from 'lodash';
 import { v4 as uuid } from 'uuid';
-import { Network, NetworkType } from 'ark-ts/model';
+import { Network, NetworkType, Peer } from 'ark-ts/model';
 
 import * as constants from '@app/app.constants';
 import { Delegate } from 'ark-ts';
@@ -42,10 +42,25 @@ export class UserDataProvider {
   }
 
   private _defaultNetworks: Network[];
+  private _osmoseNetwork: Network = <Network>({
+    activePeer: <Peer>({
+      ip: 'blockchain.osmose.world',
+      port: 4100
+    }),
+    explorer: 'http://explorer.osmose.world',
+    name: 'OSMOSE',
+    nethash: 'fa976091894eee4cad258bdae4e3323d0768c4f8610e471237408ac4aa0a92d0',
+    token: 'OSMOSE',
+    symbol: 'OSM',
+    type: NetworkType.Devnet,
+    version: 115,
+    wif: 187
+  });
 
   public get defaultNetworks(): Network[] {
     if (!this._defaultNetworks) {
-      this._defaultNetworks = Network.getAll();
+      // this._defaultNetworks = Network.getAll();
+      this._defaultNetworks = [ this._osmoseNetwork ];
     }
     return this._defaultNetworks;
   }

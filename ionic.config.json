@@ -1,8 +1,8 @@
 {
-  "name": "ark-ionic",
-  "app_id": "0894ffa2",
-  "type": "ionic-angular",
+  "name": "osmose-ionic",
   "integrations": {
     "cordova": {}
-  }
+  },
+  "type": "ionic-angular",
+  "pro_id": "0894ffa2"
 }

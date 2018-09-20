@@ -1,21 +1,9 @@
-# Ark Mobile
+![OSMOSE Mobile](https://imgur.com/a/7ZNHkSQ)
 
-<p align="center">
-    <img src="./banner.png" />
-</p>
+# OSMOSE Mobile
+> An OSMOSE Wallet in your pocket
 
-> A Wallet for Everyone
-
-[![Build Status](https://badgen.now.sh/travis/ArkEcosystem/mobile-wallet)](https://travis-ci.org/ArkEcosystem/mobile-wallet)
-[![Latest Version](https://badgen.now.sh/github/release/ArkEcosystem/mobile-wallet)](https://github.com/ArkEcosystem/mobile-wallet/releases/latest)
-[![License: MIT](https://badgen.now.sh/badge/license/MIT/green)](https://opensource.org/licenses/MIT)
-
-ARK’s mobile wallet is a hybrid application (using the same codebase for Android and iOS which helps with coordinated development). Created using Ionic framework and ARK’s [TypeScript API](https://github.com/ArkEcosystem/ark-ts) to interact with the ARK network via your mobile phone, anytime, anywhere (as long as you have an internet connection).
-
-## Download
-
-- [Google Play](https://play.google.com/store/apps/details?id=io.ark.wallet.mobile)
-- [App Store](https://itunes.apple.com/us/app/mobile-ark/id1324625967)
+OSMOSE's mobile wallet is a hybrid application (using the same codebase for Android and iOS which helps with coordinated development). Created using Ionic framework and OSMOSE’s [TypeScript API](https://github.com/ArkEcosystem/ark-ts) to interact with the OSMOSE network via your mobile phone, anytime, anywhere (as long as you have an internet connection).
 
 ## Features
 
@@ -24,9 +12,9 @@ ARK’s mobile wallet is a hybrid application (using the same codebase for Andro
 - Encrypt access to your profile with a custom 6 digit PIN (AES256+PBKDF2).
 - Most transaction types are available: send, receive, vote, unvote, register a delegate.
 - Connects to both mainnet and devnet.
-- Option for additional profiles (separate profiles for different ARK addresses or networks).
+- Option for additional profiles (separate profiles for different OSMOSE addresses or networks).
 - Option to add contacts and easily transact with them.
-- Total balance of your combined ARK addresses.
+- Total balance of your combined OSMOSE addresses.
 - Wallet backup - input your selected PIN to decrypt your wallet and gain view of your private data.
 - Change PIN - if you want to change your encryption/decryption PIN you can easily do so..
 - Clear Data — you can clear all your data from the phone.
@@ -79,24 +67,18 @@ To run the E2E (end to end) tests:
 $ npm run test:e2e
 ```
 
-## Security
-
-If you discover a security vulnerability within this application, please send an e-mail to security@ark.io. All security vulnerabilities will be promptly addressed.
-
 ## Contributing
 
 - If you find any bugs, submit an [issue](../../issues) or open [pull-request](../../pulls), helping us catch and fix them.
-- Engage with other users and developers on [ARK Slack](https://ark.io/slack/).
-- Join to our [gitter](https://gitter.im/ark-developers/Lobby).
+- Engage with other users and developers on [OSMOSE Slack](https://osmosecollective.slack.com/).
 - [Contribute bounties](./CONTRIBUTING.md).
 - [Help translate](./TRANSLATING.md).
 
-## Credits
-
-- [Lúcio Rubens](https://github.com/luciorubeens)
-- [Alex Barnsley](https://github.com/alexbarnsley)
-- [All Contributors](../../contributors)
+## Authors
+- Lúcio Rubens <lucio@ark.io>
+- Alex Barnsley <alex@ark.io>
+- Fabien Palazo <fabien@samourai.coop>
 
 ## License
 
-[MIT](LICENSE) © [ArkEcosystem](https://ark.io)
+OSMOSE Mobile is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
