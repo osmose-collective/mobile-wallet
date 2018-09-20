@@ -3,7 +3,7 @@
 # OSMOSE Mobile
 > An OSMOSE Wallet in your pocket
 
-OSMOSE's mobile wallet is a hybrid application (using the same codebase for Android and iOS which helps with coordinated development). Created using Ionic framework and OSMOSE’s [TypeScript API](https://github.com/ArkEcosystem/ark-ts) to interact with the OSMOSE network via your mobile phone, anytime, anywhere (as long as you have an internet connection).
+OSMOSE's mobile wallet is a hybrid application (using the same codebase for Android and iOS which helps with coordinated development). Created using Ionic framework and ARK’s [TypeScript API](https://github.com/ArkEcosystem/ark-ts) to interact with the OSMOSE network via your mobile phone, anytime, anywhere (as long as you have an internet connection).
 
 ## Features
 
@@ -71,7 +71,6 @@ $ npm run test:e2e
 
 - If you find any bugs, submit an [issue](../../issues) or open [pull-request](../../pulls), helping us catch and fix them.
 - Engage with other users and developers on [OSMOSE Slack](https://osmosecollective.slack.com/).
-- [Contribute bounties](./CONTRIBUTING.md).
 - [Help translate](./TRANSLATING.md).
 
 ## Authors
