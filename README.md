@@ -1,4 +1,4 @@
-![OSMOSE Mobile](https://imgur.com/a/7ZNHkSQ)
+![OSMOSE Mobile](https://i.imgur.com/AsGXJJi.jpg)
 
 # OSMOSE Mobile
 > An OSMOSE Wallet in your pocket
