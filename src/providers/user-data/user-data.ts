@@ -44,17 +44,21 @@ export class UserDataProvider {
   private _defaultNetworks: Network[];
   private _osmoseNetwork: Network = <Network>({
     activePeer: <Peer>({
-      ip: 'blockchain.osmose.world',
-      port: 4100
+      ip: 'v2.blockchain.osmose.world',
+      port: 4000
     }),
-    explorer: 'http://explorer.osmose.world',
+    explorer: 'http://v2.explorer.osmose.world:4200',
     name: 'OSMOSE',
-    nethash: 'fa976091894eee4cad258bdae4e3323d0768c4f8610e471237408ac4aa0a92d0',
+    nethash: '7dfc04c23439e98eb504454bb3c9e08da7f223e3d7c280ad677b40e521dda513',
     token: 'OSMOSE',
     symbol: 'OSM',
-    type: NetworkType.Devnet,
+    type: null,
     version: 115,
-    wif: 187
+    wif: 187,
+    apiPort: 4003,
+    p2pPort: 4000,
+    isV2: true,
+    p2pVersion: '2.0.0'
   });
 
   public get defaultNetworks(): Network[] {

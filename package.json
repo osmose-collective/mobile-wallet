@@ -51,7 +51,7 @@
     "@ionic-native/core": "^4.7.0",
     "@ionic-native/in-app-browser": "^4.7.0",
     "@ionic-native/keyboard": "^4.7.0",
-    "@ionic-native/local-notifications": "^4.7.0",
+    "@ionic-native/local-notifications": "^4.15.0",
     "@ionic-native/network": "^4.7.0",
     "@ionic-native/qr-scanner": "^4.7.0",
     "@ionic-native/screen-orientation": "^4.7.0",
@@ -164,9 +164,9 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-vibration": {},
       "cordova-plugin-screen-orientation": {},
-      "cordova-plugin-local-notification": {},
       "cordova-plugin-background-mode": {},
-      "cordova-plugin-add-swift-support": {}
+      "cordova-plugin-add-swift-support": {},
+      "cordova-plugin-local-notification": {}
     },
     "platforms": [
       "browser",
