@@ -12,7 +12,7 @@ jobs:
             - dependency-cache-
       - run:
           name : Install pre dependencies
-          command : sudo npm i -g ionic cordova@7.1.0
+          command : sudo npm i -g ionic@4.2.1 cordova@8.1.2 @angular/cli
       - run:
           name: Install
           command: npm install
