@@ -34,5 +34,6 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 
 .sourcemaps/
+.vscode
 
 typings/
