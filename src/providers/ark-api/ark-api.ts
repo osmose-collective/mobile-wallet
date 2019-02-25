@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-<<<<<<< HEAD
 import { HttpClient } from '@angular/common/http';
-=======
->>>>>>> 4d3bc9754c76d2879f71888845c33b52c3c1c927
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -12,11 +9,7 @@ import { UserDataProvider } from '@providers/user-data/user-data';
 import { StorageProvider } from '@providers/storage/storage';
 import { ToastProvider } from '@providers/toast/toast';
 
-<<<<<<< HEAD
 import { Transaction, TranslatableObject, BlocksEpochResponse } from '@models/model';
-=======
-import { Transaction, TranslatableObject } from '@models/model';
->>>>>>> 4d3bc9754c76d2879f71888845c33b52c3c1c927
 
 import * as arkts from 'ark-ts';
 import lodash from 'lodash';
@@ -107,7 +100,6 @@ export class ArkApiProvider {
 
     this._api = new arkts.Client(this._network);
     this.findGoodPeer();
-<<<<<<< HEAD
 
     // Fallback if the fetchEpoch fail
     this._network.epoch = arktsConfig.blockchain.date;
@@ -115,8 +107,6 @@ export class ArkApiProvider {
 
     this.fetchFees().subscribe();
     this.fetchEpoch().subscribe();
-=======
->>>>>>> 4d3bc9754c76d2879f71888845c33b52c3c1c927
   }
 
   public async findGoodPeer() {
@@ -142,10 +132,10 @@ export class ArkApiProvider {
     }
 
     // try get a peer from the hardcoded ark-ts peerlist (only works for main and devnet)
-    /*arkts.PeerApi
+    arkts.PeerApi
       .findGoodPeer(this._network)
       .subscribe((peer) => this.updateNetwork(peer),
-        () => this.toastProvider.error('API.PEER_LIST_ERROR'));*/
+        () => this.toastProvider.error('API.PEER_LIST_ERROR'));
   }
 
   private async findGoodPeerFromList(peerList: arkts.Peer[]) {
@@ -187,7 +177,6 @@ export class ArkApiProvider {
       const peerConfigResponses = await Promise.all(configChecks.map(p => p.catch(e => e)));
       for (const peerId in peerConfigResponses) {
         const config = peerConfigResponses[peerId];
-<<<<<<< HEAD
         if (config && config.data) {
           const apiConfig: any = lodash.find(config.data.plugins, (_, key) => key.split('/').reverse()[0] === 'core-api');
           if (apiConfig && apiConfig.enabled && apiConfig.port) {
@@ -195,13 +184,6 @@ export class ArkApiProvider {
             peer.port = apiConfig.port;
             filteredPeers.push(peer);
           }
-=======
-        const apiConfig = lodash.get(config, 'data.plugins["@arkecosystem/core-api"]');
-        if (apiConfig && apiConfig.enabled && apiConfig.port) {
-          const peer = preFilteredPeers[peerId];
-          peer.port = apiConfig.port;
-          filteredPeers.push(peer);
->>>>>>> 4d3bc9754c76d2879f71888845c33b52c3c1c927
         }
       }
     }
@@ -343,14 +325,9 @@ export class ArkApiProvider {
 
   public postTransaction(transaction: arkts.Transaction, peer: arkts.Peer = this._network.activePeer, broadcast: boolean = true) {
     return Observable.create((observer) => {
-<<<<<<< HEAD
       const compressTransaction = JSON.parse(JSON.stringify(transaction));
       this._api.transaction.post(compressTransaction, peer).subscribe((result: arkts.TransactionPostResponse) => {
         if (this.isSuccessfulResponse(result)) {
-=======
-      this._api.transaction.post(transaction, peer).subscribe((result: arkts.TransactionPostResponse) => {
-        if (result.transactionIds && result.transactionIds.indexOf(transaction.id) !== -1) {
->>>>>>> 4d3bc9754c76d2879f71888845c33b52c3c1c927
           this.onSendTransaction$.next(transaction);
 
           if (broadcast) {
