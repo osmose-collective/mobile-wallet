@@ -9,7 +9,8 @@ import {
   AlertController,
   LoadingController,
   Loading,
-  Content
+  Content,
+  Refresher
 } from 'ionic-angular';
 
 import { Subject } from 'rxjs/Subject';
@@ -58,6 +59,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
 
   public onEnterPinCode;
   private newDelegateName: string;
+  private newDelegateFee: number;
   private newSecondPassphrase: string;
 
   public emptyTransactions = false;
@@ -100,6 +102,11 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
 
   copyAddress() {
     this.clipboard.copy(this.address).then(() => this.toastProvider.success('COPIED_CLIPBOARD'), (err) => this.toastProvider.error(err));
+  }
+
+  doRefresh(refresher: Refresher) {
+    this.refreshAccount();
+    this.refreshTransactions(true, refresher);
   }
 
   presentWalletActionSheet() {
@@ -255,24 +262,27 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
   }
 
   presentLabelModal() {
-    const modal = this.modalCtrl.create('SetLabelPage', {'label': this.wallet.label}, {cssClass: 'inset-modal-tiny'});
+    const modal = this.modalCtrl.create('SetLabelPage', {'label': this.wallet.label});
 
-    modal.onDidDismiss((label) => {
-      this.userDataProvider
+    modal.onDidDismiss((label, role) => {
+      if (role === 'submit') {
+        this.userDataProvider
           .setWalletLabel(this.wallet, label)
           .subscribe(null, error => this.toastProvider.error(error, 3000));
+      }
     });
 
     modal.present();
   }
 
   presentRegisterDelegateModal() {
-    const modal = this.modalCtrl.create('RegisterDelegatePage', null, { cssClass: 'inset-modal' });
+    const modal = this.modalCtrl.create('RegisterDelegatePage', null);
 
-    modal.onDidDismiss((name) => {
+    modal.onDidDismiss(({ name, fee }) => {
       if (lodash.isEmpty(name)) { return; }
 
       this.newDelegateName = name;
+      this.newDelegateFee = fee;
       this.onEnterPinCode = this.createDelegate;
       this.pinCode.open('PIN_CODE.TYPE_PIN_SIGN_TRANSACTION', true, true);
 
@@ -282,7 +292,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
   }
 
   presentRegisterSecondPassphraseModal() {
-    const modal = this.modalCtrl.create('RegisterSecondPassphrasePage', null, { cssClass: 'inset-modal-large'});
+    const modal = this.modalCtrl.create('RegisterSecondPassphrasePage', null);
 
     modal.onDidDismiss((newSecondPassphrase) => {
       if (lodash.isEmpty(newSecondPassphrase)) { return; }
@@ -335,6 +345,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
     this.arkApiProvider.api.transaction.createDelegate(transaction)
       .takeUntil(this.unsubscriber$)
       .subscribe((data) => {
+        data.fee = this.newDelegateFee;
         this.confirmTransaction.open(data, keys);
       });
   }
@@ -368,7 +379,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
       this.navCtrl.setRoot('WalletListPage');
   }
 
-  private refreshTransactions(save: boolean = true, loader?: Loading) {
+  private refreshTransactions(save: boolean = true, loader?: Loading|Refresher) {
     this.zone.runOutsideAngular(() => {
       this.arkApiProvider.api.transaction.list({
         recipientId: this.address,
@@ -376,13 +387,19 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
         orderBy: 'timestamp:desc',
       })
       .finally(() => this.zone.run(() => {
-        if (loader) { loader.dismiss(); }
+        if (loader) {
+          if (loader instanceof Loading) {
+            loader.dismiss();
+          } else if (loader instanceof Refresher) {
+            loader.complete();
+          }
+        }
         this.emptyTransactions = lodash.isEmpty(this.wallet.transactions);
       }))
       .takeUntil(this.unsubscriber$)
       .subscribe((response) => {
         if (response && response.success) {
-          this.wallet.loadTransactions(response.transactions);
+          this.wallet.loadTransactions(response.transactions, this.arkApiProvider.network);
           this.wallet.lastUpdate = new Date().getTime();
           this.wallet.isCold = lodash.isEmpty(response.transactions);
           if (save) { this.saveWallet(); }
@@ -399,6 +416,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
     this.arkApiProvider.api.account.get({address: this.address}).takeUntil(this.unsubscriber$).subscribe((response) => {
       if (response.success) {
         this.wallet.deserialize(response.account);
+        this.saveWallet();
         if (this.wallet.isDelegate) {
           return;
         }
@@ -412,8 +430,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
 
   private refreshAllData() {
     this.refreshAccount();
-    this.refreshTransactions(false);
-    this.saveWallet();
+    this.refreshTransactions();
   }
 
   private onUpdateMarket() {

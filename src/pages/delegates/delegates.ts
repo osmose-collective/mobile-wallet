@@ -1,5 +1,5 @@
 import { Component, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, Platform, Slides } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, Platform, Slides, Searchbar } from 'ionic-angular';
 
 import { Subject } from 'rxjs/Subject';
 import { ArkApiProvider } from '@providers/ark-api/ark-api';
@@ -22,9 +22,10 @@ export class DelegatesPage implements OnDestroy {
   @ViewChild('delegateSlider') slider: Slides;
   @ViewChild('pinCode') pinCode: PinCodeComponent;
   @ViewChild('confirmTransaction') confirmTransaction: ConfirmTransactionComponent;
+  @ViewChild('searchbar') searchbar: Searchbar;
 
   public isSearch = false;
-  public searchQuery: any = { username: ''};
+  public searchQuery = '';
 
   public delegates: Delegate[];
   public activeDelegates: Delegate[];
@@ -41,6 +42,7 @@ export class DelegatesPage implements OnDestroy {
   ];
 
   private selectedDelegate: Delegate;
+  private selectedFee: number;
 
   private currentWallet: Wallet;
   private walletVote: Delegate;
@@ -64,11 +66,12 @@ export class DelegatesPage implements OnDestroy {
     const modal = this.modalCtrl.create('DelegateDetailPage', {
       delegate,
       vote: this.walletVote,
-    }, { cssClass: 'inset-modal-large', showBackdrop: false, enableBackdropDismiss: true });
+    }, { showBackdrop: false, enableBackdropDismiss: true });
 
-    modal.onDidDismiss((delegateVote) => {
+    modal.onDidDismiss(({ delegateVote, fee }) => {
       if (!delegateVote) { return; }
 
+      this.selectedFee = fee;
       this.selectedDelegate = delegateVote; // Save the delegate that we want to vote for
       this.pinCode.open('PIN_CODE.TYPE_PIN_SIGN_TRANSACTION', true, true);
 
@@ -78,8 +81,13 @@ export class DelegatesPage implements OnDestroy {
   }
 
   toggleSearchBar() {
-    this.searchQuery.username = '';
+    this.searchQuery = '';
     this.isSearch = !this.isSearch;
+    if (this.isSearch) {
+      setTimeout(() => {
+        this.searchbar.setFocus();
+      }, 100);
+    }
   }
 
   onSlideChanged(slider) {
@@ -117,6 +125,7 @@ export class DelegatesPage implements OnDestroy {
     };
 
     this.arkApiProvider.api.transaction.createVote(data).subscribe((transaction) => {
+      transaction.fee = this.selectedFee; // The transaction will be re-signed
       this.confirmTransaction.open(transaction, keys);
     });
   }

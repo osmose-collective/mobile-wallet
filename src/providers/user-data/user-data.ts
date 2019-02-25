@@ -29,6 +29,7 @@ export class UserDataProvider {
   public currentWallet: Wallet;
 
   public onActivateNetwork$: Subject<StoredNetwork> = new Subject();
+  public onUpdateNetwork$: Subject<StoredNetwork> = new Subject();
   public onCreateWallet$: Subject<Wallet> = new Subject();
   public onUpdateWallet$: Subject<Wallet> = new Subject();
   public onSelectProfile$: Subject<Profile> = new Subject();
@@ -74,6 +75,8 @@ export class UserDataProvider {
 
     this.onLogin();
     this.onClearStorage();
+
+    this.onUpdateNetwork$.subscribe(network => this.currentNetwork = network);
   }
 
   addOrUpdateNetwork(network: Network, networkId?: string): Observable<{ network: Network, id: string }> {
@@ -107,7 +110,7 @@ export class UserDataProvider {
   }
 
   getProfileByName(name: string) {
-    const profile = lodash.find(this.profiles, id => id.name.toLowerCase() === name.toLowerCase());
+    const profile = lodash.find(this.profiles, (id: any) => id.name.toLowerCase() === name.toLowerCase());
     if (profile) {
       return new Profile().deserialize(profile);
     }
@@ -224,7 +227,7 @@ export class UserDataProvider {
 
     if (profile.wallets[address]) {
       wallet = wallet.deserialize(profile.wallets[address]);
-      wallet.loadTransactions(wallet.transactions);
+      wallet.loadTransactions(wallet.transactions, this.currentNetwork);
       return wallet;
     }
 
