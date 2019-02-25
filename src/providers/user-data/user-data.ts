@@ -49,7 +49,7 @@ export class UserDataProvider {
       port: 4002
     }),
     explorer: 'http://51.15.88.55:4200',
-    name: 'OSMOSE',
+    name: 'TESTMOSE',
     nethash: '32d38282cfc302fd9d1fb2a7c1cdfc3683565333cea2e4ad1ba93a7cbea22169',
     token: 'TESTMOSE',
     symbol: 'TSM',
