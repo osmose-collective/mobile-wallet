@@ -27,7 +27,7 @@ OSMOSE's mobile wallet is a hybrid application (using the same codebase for Andr
 First follow the steps below to install the dependencies:
 
 ```bash
-$ npm install -g cordova@8.1.2 ionic@4.2.1
+$ npm install -g ionic cordova@7.1.0
 $ npm install
 $ ionic cordova prepare
 ```
