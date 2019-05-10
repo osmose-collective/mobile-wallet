@@ -34,7 +34,7 @@ $app-direction: ltr;
 // The "primary" color is the only required color in the map.
 
 $colors: (
-  primary: #345ff2,
+  primary: #7c20d7,
   secondary:  #32db64,
   success:  #32db64,
   danger:     #f53d3d,
@@ -114,7 +114,3 @@ $item-md-detail-push-show: true;
 $background-ios-color: color($colors, primary-background, base);
 $background-md-color: color($colors, primary-background, base);
 $background-wp-color: color($colors, primary-background, base);
-
-$range-ios-knob-width: 20px;
-$range-md-knob-width: 20px;
-$range-wp-knob-width: 20px;
