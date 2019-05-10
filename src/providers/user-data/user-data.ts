@@ -48,7 +48,7 @@ export class UserDataProvider {
       ip: '51.15.88.55',
       port: 4103
     }),
-    explorer: 'http://51.15.88.55:4200',
+    explorer: 'http://testnet.osmose.world',
     name: 'osmose',
     nethash: 'a6323bc37ad6e95ba3454b1fc5ecb860cb7a3e3ba5d2bac7ce1dce2a12fa7ddc',
     token: 'OSMOSE',
