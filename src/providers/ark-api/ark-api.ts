@@ -268,7 +268,7 @@ export class ArkApiProvider {
 
   public fetchDelegates(numberDelegatesToGet: number, getAllDelegates = false): Observable<arkts.Delegate[]> {
     if (!this._api) { return; }
-    const limit = 51;
+    const limit = 42;
 
     const totalCount = limit;
     let offset, currentPage;
