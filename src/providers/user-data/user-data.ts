@@ -46,7 +46,7 @@ export class UserDataProvider {
   private _osmoseNetwork: Network = <Network>({
     activePeer: <Peer>({
       ip: '51.15.88.55',
-      port: 4102
+      port: 4103
     }),
     explorer: 'http://51.15.88.55:4200',
     name: 'osmose',
