@@ -44,6 +44,6 @@ export const PIN_ATTEMPTS_LIMIT = 3;
 export const PIN_ATTEMPTS_TIMEOUT_MILLISECONDS = 30 * 1000;
 
 // ARK
-export const PRIVACY_POLICY_URL = 'https://ark.io/PrivacyPolicy.txt';
+export const PRIVACY_POLICY_URL = 'https://osmosecollective.com/privacy.txt';
 export const URI_QRCODE_SCHEME_PREFIX = 'osm:';
-export const NUM_ACTIVE_DELEGATES = 51;
+export const NUM_ACTIVE_DELEGATES = 42;
