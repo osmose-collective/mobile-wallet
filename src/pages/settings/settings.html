@@ -30,15 +30,6 @@
           </ion-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-        <ion-icon [name]="platform.is('ios') ? 'ios-book-outline' : 'md-book'" item-start></ion-icon>
-        <ion-label>{{ 'SETTINGS_PAGE.WORDLIST_LANGUAGE' | translate }}</ion-label>
-        <ion-select [(ngModel)]="currentSettings.wordlistLanguage" (ngModelChange)="onUpdate()" cancelText="{{ 'CANCEL' | translate }}">
-          <ion-option *ngFor="let item of objectKeys(availableOptions?.wordlistLanguages)" [value]="item">
-            {{ availableOptions?.wordlistLanguages[item] }}
-          </ion-option>
-        </ion-select>
-      </ion-item>
     </ion-item-group>
 
     <ion-item-group>
