@@ -47,3 +47,4 @@ export const PIN_ATTEMPTS_TIMEOUT_MILLISECONDS = 30 * 1000;
 export const PRIVACY_POLICY_URL = 'https://osmosecollective.com/privacy.txt';
 export const URI_QRCODE_SCHEME_PREFIX = 'osm:';
 export const NUM_ACTIVE_DELEGATES = 42;
+export const TOP_WALLETS_TO_FETCH = 100;

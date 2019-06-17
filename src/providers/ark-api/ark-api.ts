@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -8,8 +8,9 @@ import 'rxjs/add/operator/expand';
 import { UserDataProvider } from '@providers/user-data/user-data';
 import { StorageProvider } from '@providers/storage/storage';
 import { ToastProvider } from '@providers/toast/toast';
+import { HttpUtils } from '@root/src/utils/http-utils';
 
-import { Transaction, TranslatableObject, BlocksEpochResponse } from '@models/model';
+import {Transaction, TranslatableObject, BlocksEpochResponse, Wallet} from '@models/model';
 
 import * as arkts from 'ark-ts';
 import lodash from 'lodash';
@@ -17,7 +18,7 @@ import moment from 'moment';
 import * as constants from '@app/app.constants';
 import arktsConfig from 'ark-ts/config';
 import { ArkUtility } from '../../utils/ark-utility';
-import { Delegate } from 'ark-ts';
+import {AccountResponse, Delegate} from 'ark-ts';
 import { StoredNetwork, FeeStatistic } from '@models/stored-network';
 
 interface NodeFees {
@@ -33,6 +34,7 @@ interface NodeFeesResponse {
 
 interface NodeConfigurationConstants {
   vendorFieldLength?: number;
+  activeDelegates?: number;
 }
 
 interface NodeConfigurationResponse {
@@ -48,6 +50,7 @@ export class ArkApiProvider {
   public onUpdatePeer$: Subject<arkts.Peer> = new Subject<arkts.Peer>();
   public onUpdateDelegates$: Subject<arkts.Delegate[]> = new Subject<arkts.Delegate[]>();
   public onSendTransaction$: Subject<arkts.Transaction> = new Subject<arkts.Transaction>();
+  public onUpdateTopWallets$: Subject<Wallet[]> = new Subject<Wallet[]>();
 
   private _network: StoredNetwork;
   private _api: arkts.Client;
@@ -59,6 +62,7 @@ export class ArkApiProvider {
 
   constructor(
     private httpClient: HttpClient,
+    private zone: NgZone,
     private userDataProvider: UserDataProvider,
     private storageProvider: StorageProvider,
     private toastProvider: ToastProvider) {
@@ -95,7 +99,11 @@ export class ArkApiProvider {
   public get delegates(): Observable<arkts.Delegate[]> {
     if (!lodash.isEmpty(this._delegates)) { return Observable.of(this._delegates); }
 
-    return this.fetchDelegates(constants.NUM_ACTIVE_DELEGATES * 2);
+    return this.fetchDelegates(this._network.activeDelegates * 2);
+  }
+
+  public get topWallets(): Observable<Wallet[]> {
+    return this.fetchTopWallets(constants.TOP_WALLETS_TO_FETCH);
   }
 
   public setNetwork(network: StoredNetwork) {
@@ -120,6 +128,8 @@ export class ArkApiProvider {
 
     // Fallback if the fetchEpoch fail
     this._network.epoch = arktsConfig.blockchain.date;
+    // Fallback if the fetchNodeConfiguration fail
+    this._network.activeDelegates = constants.NUM_ACTIVE_DELEGATES;
     this.userDataProvider.onUpdateNetwork$.next(this._network);
 
     this.fetchFees().subscribe();
@@ -193,7 +203,8 @@ export class ArkApiProvider {
         peer.port = +this._network.p2pPort;
       }
     }
-    const preFilteredPeers = lodash.filter(peerList, (peer) => {
+    const peersListSample = peerList.slice(0, 10);
+    const preFilteredPeers = lodash.filter(peersListSample, (peer) => {
       if (peer['port'] !== port) {
         return false;
       }
@@ -211,7 +222,9 @@ export class ArkApiProvider {
     } else {
       const configChecks = [];
       for (const peer of preFilteredPeers) {
-        configChecks.push(this._api.peer.getVersion2Config(peer.ip, peer.port).toPromise());
+        configChecks.push(this.zone.runOutsideAngular(() =>
+          this._api.peer.getVersion2Config(peer.ip, peer.port).toPromise()
+        ));
       }
 
       const peerConfigResponses = await Promise.all(configChecks.map(p => p.catch(e => e)));
@@ -268,7 +281,7 @@ export class ArkApiProvider {
 
   public fetchDelegates(numberDelegatesToGet: number, getAllDelegates = false): Observable<arkts.Delegate[]> {
     if (!this._api) { return; }
-    const limit = 42;
+    const limit = this._network.activeDelegates;
 
     const totalCount = limit;
     let offset, currentPage;
@@ -299,6 +312,26 @@ export class ArkApiProvider {
       });
     });
 
+  }
+
+  fetchTopWallets(numberWalletsToGet: number, page?: number): Observable<Wallet[]> {
+    if (!this._network || !this._network.isV2) {
+      return Observable.empty();
+    }
+
+    let topWallets: Wallet[] = [];
+
+    const queryParams: HttpParams = HttpUtils.buildQueryParams({ limit : numberWalletsToGet, page: page});
+
+    return Observable.create((observer) => {
+      this.httpClient.get<{ data: Wallet[], meta: any }>(`${this._network.getPeerAPIUrl()}/api/v2/wallets/top`, { params: queryParams })
+        .subscribe((response) => {
+          topWallets = response.data;
+          this.onUpdateTopWallets$.next(topWallets);
+          observer.next(topWallets);
+        });
+      }
+    );
   }
 
   public createTransaction(transaction: Transaction, key: string, secondKey: string, secondPassphrase: string): Observable<Transaction> {
@@ -436,16 +469,20 @@ export class ArkApiProvider {
     this.userDataProvider.addOrUpdateNetwork(this._network, this.userDataProvider.currentProfile.networkId);
     this._api = new arkts.Client(this._network);
 
-    this.fetchDelegates(constants.NUM_ACTIVE_DELEGATES * 2).subscribe((data) => {
+    this.fetchDelegates(this._network.activeDelegates * 2).subscribe((data) => {
       this._delegates = data;
     });
 
     this.fetchFees().subscribe();
     this.fetchFeeStatistics().subscribe();
     this.fetchNodeConfiguration().subscribe((response: NodeConfigurationResponse) => {
-      const vendorFieldLength = response.data.constants.vendorFieldLength;
+      const { vendorFieldLength, activeDelegates } = response.data && response.data.constants || {} as NodeConfigurationConstants;
+
       if (vendorFieldLength) {
         this._network.vendorFieldLength = vendorFieldLength;
+      }
+      if (activeDelegates) {
+        this._network.activeDelegates = activeDelegates;
       }
     });
   }
@@ -469,7 +506,7 @@ export class ArkApiProvider {
 
     return Observable.create((observer) => {
       this.httpClient.get(
-        `${this._network.getPeerAPIUrl()}/api/v2/node/fees?days=30`
+        `${this._network.getPeerAPIUrl()}/api/v2/node/fees?days=7`
       ).subscribe((response: NodeFeesResponse) => {
         const data = response.data;
         // Converts the new response to the old template

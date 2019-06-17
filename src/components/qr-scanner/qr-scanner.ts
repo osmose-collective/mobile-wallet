@@ -58,7 +58,7 @@ export class QRScannerComponent {
     } else {
       if (bip39.validateMnemonic(qrCode)) {
         scheme.passphrase = qrCode;
-      } else if (qrCode.match(/^[Oo]{1}[0-9a-zA-Z]{33}/g)) {
+      } else if (qrCode.match(/^[OoDdTt]{1}[0-9a-zA-Z]{33}/g)) {
         scheme.address = qrCode;
       }
 
