@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import {
   IonicPage,
   NavController,
@@ -96,10 +96,6 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
     this.wallet = this.userDataProvider.getWalletByAddress(this.address);
   }
 
-  ngOnInit(): void {
-    this.confirmTransaction.onConfirm.takeUntil(this.unsubscriber$).subscribe(this.onTransactionConfirm);
-  }
-
   copyAddress() {
     this.clipboard.copy(this.address).then(() => this.toastProvider.success('COPIED_CLIPBOARD'), (err) => this.toastProvider.error(err));
   }
@@ -117,7 +113,8 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
       'WALLETS_PAGE.SECOND_PASSPHRASE',
       'SETTINGS_PAGE.WALLET_BACKUP',
       'WALLETS_PAGE.REMOVE_WALLET',
-      'WALLETS_PAGE.CONVERT_TO_FULL_WALLET'
+      'WALLETS_PAGE.CONVERT_TO_FULL_WALLET',
+      'WALLETS_PAGE.TOP_WALLETS'
     ]).takeUntil(this.unsubscriber$).subscribe((translation) => {
       const delegateItem =  {
         text: translation['DELEGATES_PAGE.REGISTER_DELEGATE'],
@@ -169,8 +166,18 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
         }
       };
 
+      const topWalletsItem = {
+        text: translation['WALLETS_PAGE.TOP_WALLETS'],
+        role: 'label',
+        icon: this.platform.is('ios') ? 'ios-filing-outline' : 'md-filing',
+        handler: () => {
+          this.presentTopWalletsModal();
+        }
+      };
+
       // DEPRECATED:
       // if (!this.wallet.isWatchOnly && !this.wallet.secondSignature) buttons.unshift(secondPassphraseItem);
+      if (!this.wallet.isWatchOnly) { buttons.unshift(topWalletsItem); }
       if (!this.wallet.isWatchOnly) { buttons.unshift(delegatesItem); } // "Watch Only" address can't vote
       if (!this.wallet.isWatchOnly && !this.wallet.isDelegate) { buttons.unshift(delegateItem); }
       if (!this.wallet.isWatchOnly) { buttons.splice(buttons.length - 1, 0, backupItem); }
@@ -332,6 +339,10 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
     });
   }
 
+  presentTopWalletsModal() {
+    this.navCtrl.push('WalletTopListPage');
+  }
+
   private createDelegate(keys: WalletKeys) {
     const publicKey = this.wallet.publicKey || PrivateKey.fromSeed(keys.key).getPublicKey().toHex();
 
@@ -371,7 +382,7 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
   }
 
   private saveWallet() {
-    this.userDataProvider.saveWallet(this.wallet);
+    this.userDataProvider.updateWallet(this.wallet, this.profile.profileId);
   }
 
   private deleteWallet() {
@@ -485,19 +496,17 @@ export class WalletDashboardPage implements OnInit, OnDestroy {
     }
   }
 
-  ionViewDidEnter() {
+  ngOnInit(): void {
+    this.confirmTransaction.onConfirm.takeUntil(this.unsubscriber$).subscribe(this.onTransactionConfirm);
     this.load();
-
     this.refreshAllData();
     this.refreshPrice();
+    this.onUpdateWallet();
+    this.onUpdateMarket();
+    this.content.resize();
 
     this.refreshDataIntervalListener = setInterval(() => this.refreshAllData(), constants.WALLET_REFRESH_TRANSACTIONS_MILLISECONDS);
     this.refreshTickerIntervalListener = setInterval(() => this.refreshPrice(), constants.WALLET_REFRESH_PRICE_MILLISECONDS);
-
-    this.onUpdateWallet();
-    this.onUpdateMarket();
-
-    this.content.resize();
   }
 
   ngOnDestroy() {
