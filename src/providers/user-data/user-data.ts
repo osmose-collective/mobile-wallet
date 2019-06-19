@@ -46,7 +46,7 @@ export class UserDataProvider {
   private _osmoseNetwork: Network = <Network>({
     activePeer: <Peer>({
       ip: '51.15.88.55',
-      port: 4103
+      port: 4002
     }),
     explorer: 'http://testnet.osmose.world',
     name: 'osmose',
@@ -56,10 +56,10 @@ export class UserDataProvider {
     type: null,
     version: 65,
     wif: 129,
-    apiPort: 4103,
-    p2pPort: 4102,
+    apiPort: 4003,
+    p2pPort: 4002,
     isV2: true,
-    p2pVersion: '2.3.22'
+    p2pVersion: '2.4.12'
   });
 
   public get defaultNetworks(): Network[] {
