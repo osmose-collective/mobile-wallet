@@ -1,20 +1,16 @@
 {
-  "name": "ark-mobile",
-  "version": "1.4.4",
+  "name": "osmose-mobile",
+  "version": "1.2.3",
   "author": {
-    "name": "Lucio Rubens",
-    "email": "luciorubeens@gmail.com",
-    "url": "https://github.com/luciorubeens"
+    "name": "Zaraki",
+    "email": "crew@osmose.world",
+    "url": "https://github.com/osmose-collective"
   },
   "contributors": [
     {
       "name": "Alex Barnsley",
       "email": "alex@ark.io",
       "url": "https://github.com/alexbarnsley"
-    },
-    {
-      "name": "Fabien Palazo",
-      "email": "fabien@samourai.coop"
     }
   ],
   "homepage": "https://github.com/ArkEcosystem/mobile-wallet#readme",
