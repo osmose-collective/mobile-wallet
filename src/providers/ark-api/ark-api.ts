@@ -135,7 +135,7 @@ export class ArkApiProvider {
     this.findGoodPeer();
 
     // Fallback if the fetchEpoch fail
-    this._network.epoch = arktsConfig.blockchain.date;
+    this._network.epoch = new Date('2019-05-15T12:16:01.019Z');
     // Fallback if the fetchNodeConfiguration fail
     this._network.activeDelegates = constants.NUM_ACTIVE_DELEGATES;
     this.userDataProvider.onUpdateNetwork$.next(this._network);
