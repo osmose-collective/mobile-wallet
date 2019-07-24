@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.osmoseworld.wallet.mobile" version="1.2.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="io.osmoseworld.wallet.mobile" version="1.3.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>OSMOSE</name>
     <description>OSMOSE</description>
-    <author email="crew@osmose.world" href="http://www.osmosecollective.com/">OSMOSE Collective</author>
+    <author email="adm@osmose.world" href="http://www.osmose.world/">OSMOSE Collective</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="http://ionic.local/*" />
